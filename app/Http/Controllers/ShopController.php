@@ -10,7 +10,7 @@ class ShopController extends Controller
     // Add product to cart
 
     // Show single product details with all images.(kukunin yung id ah)
-
+public function 
     // Remove item from cart (kukunin yung id)
 
     // Update quantity of a cart item (kukunin id)
