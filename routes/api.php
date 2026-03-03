@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\EnsureTokenIsValid;
+use App\Http\Controllers\AdminProductController;
 
 Route::post('/login', [AccountController::class, 'login']);
 Route::post('/register', [AccountController::class, 'store']);
@@ -42,7 +43,10 @@ Route::middleware([EnsureTokenIsValid::class])->group(function () {
 
     Route::get('/products/{id}', [ShopController::class, 'showProduct']);
     Route::post('/cart/add', [ShopController::class, 'addToCart']);
-    Route::post('/products', [ShopController::class, 'addProduct']);
     Route::delete('/cart/{id}', [ShopController::class, 'deleteFromCart']);
-    
+    Route::post('/admin/products', [AdminProductController::class, 'addProduct']);
+    Route::get('/admin/products', [AdminProductController::class, 'showAllProducts']);
+    Route::get('/admin/products/{id}', [AdminProductController::class, 'showProduct']);
+    Route::put('/admin/products/{id}', [AdminProductController::class, 'updateProduct']);
+    Route::delete('/admin/products/{id}', [AdminProductController::class, 'deleteProduct']);
 });
