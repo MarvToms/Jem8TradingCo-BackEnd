@@ -13,21 +13,28 @@ class ShopController extends Controller
     // Add product to cart
     public function addToCart(Request $request)
     {
-        // $user = $request->user();
+        $user = $request->user();
 
-        // if (!$user) {
-        //     return response()->json(['message' => 'Unauthorized'], 401);
-        // }
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
 
-        $request -> validate([
+        $request->validate([
             'quantity' => 'required|integer|min:1',
-            'product_id' => 'required|integer|exists:products,id'
+            'product_id' => 'required|integer|exists:products,product_id'
         ]);
-        
+
+        $product = Product::where('product_id', $request->product_id)->first();
+        if (!$product) {
+            return response()->json(['message' => 'Product not found'], 404);
+        }
+
         $Cart = Cart::create([
+            'user_id' => $user->id,
             'quantity' => $request->quantity,
             'product_id' => $request->product_id,
-            // 'account_id' => $user->id   // need updates
+            'total' => floatval($product->price) * intval($request->quantity),
+            'status' => 'active',
         ]);
         
         if (!$Cart) {
@@ -126,8 +133,7 @@ class ShopController extends Controller
         if (!$user) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
-
-        $cartItems = Cart::with('Product') -> where ('account_id',$user->id) -> get();
+        $cartItems = Cart::with('product')->where('user_id', $user->id)->get();
         return response()->json([
             'cartItems' => $cartItems
         ], 200);
